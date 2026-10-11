@@ -10,33 +10,109 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AuthenticatedWorkoutsIndexRouteImport } from './routes/_authenticated/workouts.index'
+import { Route as AuthenticatedWorkoutsIdRouteImport } from './routes/_authenticated/workouts.$id'
+import { Route as AuthenticatedWorkoutsNewRouteImport } from './routes/_authenticated/workouts.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedWorkoutsIndexRoute =
+  AuthenticatedWorkoutsIndexRouteImport.update({
+    id: '/workouts/',
+    path: '/workouts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedWorkoutsIdRoute = AuthenticatedWorkoutsIdRouteImport.update({
+  id: '/workouts/$id',
+  path: '/workouts/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWorkoutsNewRoute =
+  AuthenticatedWorkoutsNewRouteImport.update({
+    id: '/workouts/new',
+    path: '/workouts/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
+  '/workouts/new': typeof AuthenticatedWorkoutsNewRoute
+  '/workouts/': typeof AuthenticatedWorkoutsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
+  '/workouts/new': typeof AuthenticatedWorkoutsNewRoute
+  '/workouts': typeof AuthenticatedWorkoutsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_authenticated/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
+  '/_authenticated/workouts/new': typeof AuthenticatedWorkoutsNewRoute
+  '/_authenticated/workouts/': typeof AuthenticatedWorkoutsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/workouts/$id'
+    | '/workouts/new'
+    | '/workouts/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/workouts/$id'
+    | '/workouts/new'
+    | '/workouts'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/login'
+    | '/register'
+    | '/_authenticated/workouts/$id'
+    | '/_authenticated/workouts/new'
+    | '/_authenticated/workouts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +124,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/workouts/': {
+      id: '/_authenticated/workouts/'
+      path: '/workouts'
+      fullPath: '/workouts/'
+      preLoaderRoute: typeof AuthenticatedWorkoutsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/workouts/$id': {
+      id: '/_authenticated/workouts/$id'
+      path: '/workouts/$id'
+      fullPath: '/workouts/$id'
+      preLoaderRoute: typeof AuthenticatedWorkoutsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/workouts/new': {
+      id: '/_authenticated/workouts/new'
+      path: '/workouts/new'
+      fullPath: '/workouts/new'
+      preLoaderRoute: typeof AuthenticatedWorkoutsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedWorkoutsIdRoute: typeof AuthenticatedWorkoutsIdRoute
+  AuthenticatedWorkoutsNewRoute: typeof AuthenticatedWorkoutsNewRoute
+  AuthenticatedWorkoutsIndexRoute: typeof AuthenticatedWorkoutsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedWorkoutsIdRoute: AuthenticatedWorkoutsIdRoute,
+  AuthenticatedWorkoutsNewRoute: AuthenticatedWorkoutsNewRoute,
+  AuthenticatedWorkoutsIndexRoute: AuthenticatedWorkoutsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
