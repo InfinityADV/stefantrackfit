@@ -38,7 +38,7 @@ function Register() {
     setError(null);
     setSuccess(null);
     const parsed = schema.safeParse(form);
-    if (!parsed.success) return setError(parsed.error.issues[0].message);
+    if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Invalid input");
     setBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
